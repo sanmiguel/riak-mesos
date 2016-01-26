@@ -175,6 +175,7 @@ func (frn *FrameworkRiakNode) ApplyReservedOffer(offerHelper *common.OfferHelper
 		URI:            sc.schedulerHTTPServer.GetURI(),
 		ClusterName:    frn.ClusterName,
 		UseSuperChroot: os.Getenv("USE_SUPER_CHROOT") != "false",
+		EPMDPort:       <-ports,
 		HTTPPort:       <-ports,
 		PBPort:         <-ports,
 		DisterlPort:    <-ports,

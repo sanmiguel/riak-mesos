@@ -12,6 +12,7 @@ type TaskData struct {
 	URI                    string
 	Host                   string
 	UseSuperChroot         bool
+	EPMDPort               int64
 	HTTPPort               int64
 	PBPort                 int64
 	HandoffPort            int64
