@@ -17,11 +17,12 @@ import (
 )
 
 type SchedulerHTTPServer struct {
-	sc       *SchedulerCore
-	hostURI  string
-	riakURI  string
-	cepmdURI string
-	URI      string
+	sc         *SchedulerCore
+	hostURI    string
+	riakURI    string
+	cepmdURI   string
+	patchesURI string
+	URI        string
 }
 
 func parseIP(address string) net.IP {
@@ -495,6 +496,7 @@ func ServeExecutorArtifact(sc *SchedulerCore, schedulerHostname string) *Schedul
 
 	hostURI := fmt.Sprintf("http://%s:%d/static/riak_mesos_executor.tar.gz", hostname, port)
 	riakURI := fmt.Sprintf("http://%s:%d/static/riak-bin.tar.gz", hostname, port)
+	patchesURI := fmt.Sprintf("http://%s:%d/static/riak-basho-patches.tar.gz", hostname, port)
 	cepmdURI := fmt.Sprintf("http://%s:%d/static/cepmd_linux_amd64", hostname, port)
 
 	URI := fmt.Sprintf("http://%s:%d", hostname, port)
@@ -518,6 +520,7 @@ func ServeExecutorArtifact(sc *SchedulerCore, schedulerHostname string) *Schedul
 		sc:       sc,
 		hostURI:  hostURI,
 		riakURI:  riakURI,
+		patchesURI: patchesURI,
 		cepmdURI: cepmdURI,
 		URI:      URI,
 	}
