@@ -13,7 +13,6 @@ import (
 	"errors"
 	log "github.com/Sirupsen/logrus"
 	mesos "github.com/mesos/mesos-go/mesosproto"
-	"github.com/basho-labs/riak-mesos/cepmd/cepm"
 	"github.com/basho-labs/riak-mesos/common"
 	metamgr "github.com/basho-labs/riak-mesos/metadata_manager"
 	"github.com/basho-labs/riak-mesos/process_manager"
@@ -41,7 +40,6 @@ type templateData struct {
 }
 
 type advancedTemplateData struct {
-	CEPMDPort int
 }
 
 func NewRiakNode(taskInfo *mesos.TaskInfo, executor *ExecutorCore) *RiakNode {
@@ -155,7 +153,7 @@ func (riakNode *RiakNode) configureRiak(taskData common.TaskData) templateData {
 	}
 	return vars
 }
-func (riakNode *RiakNode) configureAdvanced(cepmdPort int) {
+func (riakNode *RiakNode) configureAdvanced() {
 
 	fetchURI := fmt.Sprintf("%s/api/v1/clusters/%s/advancedConfig", riakNode.taskData.URI, riakNode.taskData.ClusterName)
 	resp, err := http.Get(fetchURI)
@@ -176,7 +174,6 @@ func (riakNode *RiakNode) configureAdvanced(cepmdPort int) {
 
 	// Populate template data from the MesosTask
 	vars := advancedTemplateData{}
-	vars.CEPMDPort = cepmdPort
 	file, err := os.OpenFile("root/riak/etc/advanced.config", os.O_TRUNC|os.O_CREATE|os.O_RDWR, 0664)
 
 	defer file.Close()
@@ -234,9 +231,7 @@ func (riakNode *RiakNode) Run() {
 
 	config := riakNode.configureRiak(riakNode.taskData)
 
-	c := cepm.NewCPMd(0, riakNode.metadataManager)
-	c.Background()
-	riakNode.configureAdvanced(c.GetPort())
+	riakNode.configureAdvanced()
 
 	args := []string{"console", "-noinput"}
 
@@ -246,17 +241,6 @@ func (riakNode *RiakNode) Run() {
 	}
 
 	log.Infof("Found kernel dirs: %v", kernelDirs)
-
-	err = cepm.InstallInto(fmt.Sprint(kernelDirs[0], "/ebin"))
-	if err != nil {
-		log.Panic(err)
-	}
-	if err := common.KillEPMD("root/riak"); err != nil {
-		log.Fatal("Could not kill EPMd: ", err)
-	}
-	args = append(args, "-no_epmd")
-	os.MkdirAll(fmt.Sprint(kernelDirs[0], "/priv"), 0777)
-	ioutil.WriteFile(fmt.Sprint(kernelDirs[0], "/priv/cepmd_port"), []byte(fmt.Sprintf("%d.", c.GetPort())), 0777)
 
 	HealthCheckFun := func() error {
 		log.Info("Checking is Riak is started")

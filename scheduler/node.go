@@ -210,10 +210,6 @@ func (frn *FrameworkRiakNode) ApplyReservedOffer(offerHelper *common.OfferHelper
 						Value:      &(sc.schedulerHTTPServer.patchesURI),
 						Executable: proto.Bool(false),
 					},
-					&mesos.CommandInfo_URI{
-						Value:      &(sc.schedulerHTTPServer.cepmdURI),
-						Executable: proto.Bool(true),
-					},
 				},
 				Shell:     proto.Bool(ExecutorShell()),
 				Arguments: ExecutorArgs(frn.CurrentID()),
