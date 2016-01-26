@@ -71,8 +71,6 @@ $(RIAK_SOURCE_DIR):
 	git clone $(RIAK_GIT)
 	cd $(RIAK_SOURCE_DIR) && git checkout $(RIAK_TAG)
 riak-bin: riak_explorer-bin $(RIAK_SOURCE_DIR)
-	rm -rf $(RIAK_SOURCE_DIR)/deps/node_package
-	git clone https://github.com/basho/node_package.git --branch no-epmd $(RIAK_SOURCE_DIR)/deps/node_package
 	cd $(RIAK_SOURCE_DIR) && $(MAKE) rel
 	cp riak_explorer/rel/riak-addon/ebin/* $(RIAK_SOURCE_DIR)/rel/riak/lib/basho-patches/
 	-rm -rf $(RIAK_SOURCE_DIR)/rel/riak/priv
