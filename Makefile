@@ -6,7 +6,7 @@ export PROJECT_BASE    ?= riak-mesos
 export DEPLOY_BASE     ?= riak-tools/$(PROJECT_BASE)
 export DEPLOY_OS       ?= ubuntu
 export OS_ARCH		   ?= linux_amd64
-export EXECUTOR_LANG ?= golang
+export EXECUTOR_LANG ?= erlang
 
 .PHONY: all clean clean_bin package clean_package sync
 all: clean_bin framework
